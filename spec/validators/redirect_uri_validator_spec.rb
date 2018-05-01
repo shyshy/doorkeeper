@@ -91,6 +91,16 @@ describe RedirectUriValidator do
       expect(application).not_to be_valid
     end
 
+    it 'accepts a secured protocol when conditional option defined' do
+      Doorkeeper.configure do
+        orm DOORKEEPER_ORM
+        force_ssl_in_redirect_uri { |uri| uri.host != 'localhost' }
+      end
+
+      application = FactoryBot.build(:application, redirect_uri: 'https://secure/callback')
+      expect(application).to be_valid
+    end
+
     it 'forbids redirect uri if required' do
       subject.redirect_uri = 'javascript://document.cookie'
 
